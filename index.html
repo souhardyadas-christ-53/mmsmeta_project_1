@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Score Predictor</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f1f5f9;
+    display: flex;
+    justify-content: center;
+    padding: 30px;
+}
+
+.card {
+    background: white;
+    width: 100%;
+    max-width: 700px;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 14px;
+    color: #64748b;
+    margin-bottom: 25px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+label {
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 4px;
+    display: block;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #cbd5e1;
+}
+
+input:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+button {
+    width: 100%;
+    margin-top: 20px;
+    padding: 14px;
+    font-size: 16px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1e40af;
+}
+
+.result {
+    margin-top: 25px;
+    padding: 15px;
+    background: #e0f2fe;
+    border-left: 5px solid #2563eb;
+    font-size: 18px;
+    font-weight: bold;
+    display: none;
+}
+
+@media (max-width: 700px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+    <h1>Student Final Score Prediction</h1>
+    <div class="subtitle">Machine Learning based academic performance estimator</div>
+
+    <div class="grid">
+        <div><label>Study Hours / Week</label><input id="study_hours_per_week"></div>
+        <div><label>Attendance %</label><input id="attendance_percentage"></div>
+        <div><label>Previous Score</label><input id="previous_score"></div>
+
+        <div><label>Assignments Completed</label><input id="assignments_completed"></div>
+        <div><label>Sleep Hours / Day</label><input id="sleep_hours"></div>
+        <div><label>Class Participation</label><input id="class_participation"></div>
+
+        <div><label>Internet Quality (1–10)</label><input id="internet_quality"></div>
+        <div><label>Extracurricular Hours</label><input id="extracurricular_hours"></div>
+        <div><label>Assignment Completion %</label><input id="assignment_completion_rate"></div>
+    </div>
+
+    <button onclick="predictScore()">Predict Final Score</button>
+
+    <div class="result" id="resultBox"></div>
+</div>
+
+<script>
+function predictScore() {
+    const data = {
+        study_hours_per_week: Number(document.getElementById("study_hours_per_week").value),
+        attendance_percentage: Number(document.getElementById("attendance_percentage").value),
+        previous_score: Number(document.getElementById("previous_score").value),
+        assignments_completed: Number(document.getElementById("assignments_completed").value),
+        sleep_hours: Number(document.getElementById("sleep_hours").value),
+        class_participation: Number(document.getElementById("class_participation").value),
+        internet_quality: Number(document.getElementById("internet_quality").value),
+        extracurricular_hours: Number(document.getElementById("extracurricular_hours").value),
+        assignment_completion_rate: Number(document.getElementById("assignment_completion_rate").value)
+    };
+
+    fetch("/predict", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(result => {
+        const box = document.getElementById("resultBox");
+        box.style.display = "block";
+        box.innerHTML = ` Predicted Final Score: <b>${result.prediction}</b>`;
+        box.scrollIntoView({behavior: "smooth"});
+    });
+}
+</script>
+
+</body>
+</html>
